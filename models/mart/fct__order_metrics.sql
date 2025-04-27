@@ -28,11 +28,11 @@ count_order_updates as (
         count(*) as total_order_updates
     from
         orders_snapshot
-    where
-        order_submission_date >= DATEADD(day, -{{ var('data_retention_days') }}, CURRENT_DATE);
     group by
         order_id,
         customer_id
+    having 
+        order_submission_date >= DATEADD(day, -{{ var('data_retention_days') }}, CURRENT_DATE)
 
 ),
 
