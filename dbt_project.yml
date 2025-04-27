@@ -81,7 +81,7 @@ models:
       
       # after build, keep grants up-to-date for environment's read-only role
       +post-hook: >
-        "GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO"
+        GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO
 
 #----- SNAPSHOTS -----#
 snapshots:
@@ -104,7 +104,7 @@ snapshots:
       
     # after build, keep grants up-to-date for environment's read-only role
     +post-hook: >
-      "GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO"
+      GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO
 
 
 #----- SEEDS -----#
@@ -117,4 +117,4 @@ seeds:
       
     # after build, keep grants up-to-date for environment's read-only role
     +post-hook: >
-      "GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO"
+      GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO
