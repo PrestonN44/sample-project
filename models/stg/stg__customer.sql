@@ -22,8 +22,8 @@ renamed as (
     from
         customer
     where 
-        c_custkey not in ( -- filter out deleted customers
-            select c_custkey
+        customer_id not in ( -- filter out deleted customers
+            select customer_id
             from deleted_customers
         )
 

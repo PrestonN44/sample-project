@@ -24,7 +24,11 @@ renamed as (
     from
         orders
     where
-        dbt_valid_to is null -- filter out expired records
+        dbt_valid_to is null    -- filter out expired records
+        and customer_id not in (  -- filter out deleted customers - we don't care about their orders anymore
+            select customer_id
+            from deleted_customers
+        )
 
 )
 
