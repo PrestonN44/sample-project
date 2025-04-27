@@ -7,6 +7,7 @@ models:
     columns:
       - name: customer_id # unique key
         data_type: int
+        description: "{{ doc('customer_id') }}" # description defined in docs block (at: /docs/descriptions.md)
         data_tests:
           - unique
           - not_null
@@ -38,6 +39,9 @@ models:
       You may use **Markdown formatting** here - it will be displayed on the *Explore* Page.
     columns:
       - name: order_id # unique key
+        description: >
+          Unique identifier for order.
+          You can (and should) add descriptions on columns too!
         data_type: int
         data_tests:
           - unique
@@ -45,6 +49,7 @@ models:
 
       - name: customer_id
         data_type: int
+        description: "{{ doc('customer_id') }}" # description defined in docs block (at: /docs/descriptions.md)
         data_tests:
           - relationships:
               to: ref('stg__customer') # customer source table
@@ -66,7 +71,7 @@ models:
         data_type: number
         data_tests:
           - not_null
-          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+          - non_negative # CUSTOM TEST (at: /tests/generic/non_negative.sql)
 
       - name: status
         data_type: string
@@ -82,6 +87,7 @@ models:
     columns:
       - name: order_id
         data_type: int
+        description: "{{ doc('order_id') }}" # description defined in docs block (at: /docs/descriptions.md)
 
       - name: part_id
         data_type: int
