@@ -6,7 +6,7 @@ with customer as (
 
 deleted_customers as (
 
-    select * from {{ ref('deleted_customers') }}
+    select * from {{ ref('deleted_customers') }} -- /seeds/deleted_customers.csv
 
 ),
 
