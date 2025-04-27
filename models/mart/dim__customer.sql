@@ -2,7 +2,7 @@ with customer as (
 
     select * from {{ ref('stg__customer') }}
 
-),
+),--testing
 
 customer_orders as (
 
