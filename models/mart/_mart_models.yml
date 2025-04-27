@@ -1,0 +1,147 @@
+version: 2
+
+models:
+  - name: fct__order_metrics
+    description: >
+      Fact model of the Mart layer.
+      Order information along with calculated metrics, including:
+        - First and last order updated dates
+        - Count of low, mid, and high cost items
+        - Total number of order updates
+    columns:
+      - name: order_id # unique key
+        data_type: int
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_submission_date
+        data_type: date
+        data_tests:
+          - not_null
+
+      - name: last_order_change_date
+        data_type: date
+        data_tests:
+          - not_null
+
+      - name: total_order_updates
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST
+
+      - name: low_cost_items
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST
+
+      - name: mid_cost_items
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST
+
+      - name: high_cost_items
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST
+
+      - name: customer_id
+        data_type: int
+        data_tests:
+          - relationships:
+              to: ref('dim__customer')
+              field: customer_id # foreign key to match on
+
+      - name: name
+        data_type: string
+        data_tests:
+          - not_null
+
+  - name: dim__customer
+    description: >
+      Dimension model of Mart layer.
+      Customer information, including:
+        - Name
+        - Address
+        - Total account balance
+        - Count of orders of each type (payed, open, fulfilled)
+        - Total order cost
+    columns:
+      - name: customer_id # unique key
+        data_type: int
+        data_tests:
+          - unique
+          - not_null
+
+      - name: name
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: address
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: phone
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: account_balance
+        data_type: number
+        data_tests:
+          - not_null
+
+      - name: num_total_orders
+        data_type: int
+        data_tests:
+          - not_null
+          - non_negative # CUSTOM TEST
+
+      - name: num_payed_orders
+        data_type: int
+        data_tests:
+          - not_null
+          - non_negative # CUSTOM TEST
+
+      - name: num_open_orders
+        data_type: int
+        data_tests:
+          - not_null
+          - non_negative # CUSTOM TEST
+
+      - name: num_fulfilled_orders
+        data_type: int
+        data_tests:
+          - not_null
+          - non_negative # CUSTOM TEST
+
+      - name: sum_orders_cost
+        data_type: number
+
+  - name: dim__lineitem
+    description: >
+      Dimension model of the Mart layer.
+      Order line item information, including:
+        - Created composite key (order_id + line number)
+        - Total line amount
+        - Mode of shipping
+        - Receipt date
+    columns:
+      - name: order_line_number_id # unique (composite) key
+        data_type: string
+        data_tests:
+          - unique
+          - not_null
+
+      - name: total_line_amount
+        data_type: date
+        data_tests:
+          - not_null
+
+      - name: ship_mode
+        data_type: date
+
+      - name: receipt_date
+        data_type: date

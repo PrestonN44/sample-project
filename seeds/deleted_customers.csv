@@ -1,0 +1,6 @@
+c_custkey,reason
+60007,'Inactive account'
+60011,'Fraudulent behavior'
+60032,'Merged account'
+60033,'Violated TOS'
+60080,'Duplicate account'

@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: stg__customer
+    description: >
+      Cleansed customer data.
+    columns:
+      - name: customer_id # unique key
+        data_type: int
+        data_tests:
+          - unique
+          - not_null
+
+      - name: name
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: address
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: phone
+        data_type: string
+
+      - name: account_balance
+        data_type: number
+        data_tests:
+          - not_null
+
+      - name: comment
+        data_type: text
+
+  - name: stg__orders
+    description: >
+      Cleansed order data. Materialized as table for increased downstream performance.
+      You may use **Markdown formatting** here - it will be displayed on the *Explore* Page.
+    columns:
+      - name: order_id # unique key
+        data_type: int
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        data_type: int
+        data_tests:
+          - relationships:
+              to: ref('stg__customer') # customer source table
+              field: customer_id   # foreign key to match on
+
+      - name: priority_int
+        data_type: int
+        data_tests:
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+
+      - name: priority_str
+        data_type: string
+        data_tests:
+          - accepted_values:
+              values: ['URGENT', 'HIGH', 'MEDIUM', 'NOT SPECIFIED', 'LOW']
+
+      - name: total_price
+        data_type: number
+        data_tests:
+          - not_null
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+
+      - name: status
+        data_type: string
+
+      - name: order_date
+        data_type: date
+        data_tests:
+          - not_null
+
+  - name: stg__lineitem
+    description: >
+      Cleansed line item data.
+    columns:
+      - name: order_id
+        data_type: int
+
+      - name: part_id
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: supp_id
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: line_number
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: quantity
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+
+      - name: extended_price
+        data_type: number
+        data_tests:
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+
+      - name: receipt_date
+        data_type: date

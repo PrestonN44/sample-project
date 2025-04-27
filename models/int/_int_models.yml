@@ -1,0 +1,69 @@
+
+version: 2
+
+models:
+  - name: int__customer_orders
+    description: >
+      Customers with count of each order type and total sum amount.
+    columns:
+      - name: customer_id # unique key
+        data_type: int
+        data_tests:
+          - unique
+          - not_null
+
+      - name: name
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: num_total_orders
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: num_payed_orders
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+
+      - name: num_open_orders
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+
+      - name: num_fulfilled_orders
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+
+      - name: sum_order_cost
+        data_type: number
+
+  - name: int__order_items
+    description: >
+      Orders with line item totals.
+    columns:
+      - name: order_id # unique key
+        data_type: int
+        data_tests:
+          - unique
+          - not_null
+
+      - name: total_line_amount
+        data_type: string
+
+      - name: low_cost_items
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+
+      - name: mid_cost_items
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
+
+      - name: high_cost_items
+        data_type: int
+        data_tests:
+          - non_negative # CUSTOM TEST (at: tests/generic/non_negative.sql)
