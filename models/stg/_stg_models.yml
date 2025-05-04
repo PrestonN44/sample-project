@@ -37,6 +37,9 @@ models:
 
       - name: total_price
         data_type: number
+        description: >
+          The order's total price as a number.
+          This should **NEVER** be negative
         data_tests:
           - not_null
           - non_negative # CUSTOM TEST (at: /tests/generic/non_negative.sql)
