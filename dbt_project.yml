@@ -1,9 +1,9 @@
-name: 'my_new_project'
-version: '1.0.0'
+name: "my_new_project"
+version: "1.0.0"
 config-version: 2
 
 # This setting configures which "profile" dbt uses for this project.
-profile: 'default'
+profile: "default"
 
 #----- PATHS -----#
 model-paths: ["models"]
@@ -14,20 +14,19 @@ macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 docs-paths: ["docs"] # CUSTOM PATH
 
-target-path: "target"  # directory which will store compiled SQL files
-clean-targets:         # directories to be removed by `dbt clean`
+target-path: "target" # directory which will store compiled SQL files
+clean-targets: # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
 
 #----- GLOBAL VARIABLES -----#
 vars:
-  dbt_table_schemas: ['DBT_SNAPSHOTS', 'DBT_MART'] # table schemas that dbt creates
+  dbt_table_schemas: ["DBT_SNAPSHOTS", "DBT_MART"] # table schemas that dbt creates
   data_retention_days: 90 # used for snapshot cut-off
 
   # roles to compare to determine local development run vs official run
-  executing_role: '{{ target.role | upper }}'
-  dbt_service_user_role: '{{ target.name | upper }}_DBT'
-
+  executing_role: "{{ target.role | upper }}"
+  dbt_service_user_role: "{{ target.name | upper }}_DBT"
 
 #----- RUN START/END ----- #
 # before run, if dbt is being executed by cloud job, ensure rollback schemas exist first for persistent table objects (mart tables and snapshot tables)
@@ -39,7 +38,7 @@ on-run-start: >
   {% endif %}
 
 # after run, if dbt is being executed by cloud job, grant usage on created schemas to environment's read-only role
-# "schemas" keyword refers to each schema in which an object was built during the current run 
+# "schemas" keyword refers to each schema in which an object was built during the current run
 on-run-end: >
   {% if var('executing_role') == var('dbt_service_user_role') %}
     {% for schema in schema %}
@@ -54,23 +53,26 @@ models:
       relation: true
       columns: true
 
+    # example models
     example:
       +materialized: view
 
-    # Staging layer
+    # 1) Staging layer
     stg:
-      +schema: stg  # created as [PERSONAL SCHEMA]_STG
+      +schema: stg # created as [PERSONAL SCHEMA]_STG
       +materialized: view
 
-    # Intermediate layer
+    # 2) Intermediate layer
     int:
-      +schema: int  # created as [PERSONAL SCHEMA]_INT
+      +schema: int # created as [PERSONAL SCHEMA]_INT
       +materialized: view
 
-    # Mart layer
+    # 3) Mart layer
     mart:
-      +schema: mart  # created as [PERSONAL SCHEMA]_MART
+      +schema: mart # created as [PERSONAL SCHEMA]_MART
       +materialized: table
+      +tags: ["critical"]
+      +transient: false # create as permanent Snowflake tables for longer data retention time
 
       # before build, clone table (if it already exists) to allow rolling back if needed
       +pre-hook: >
@@ -79,7 +81,7 @@ models:
         %}
           CREATE OR REPLACE TABLE {{ this.schema }}_ROLLBACK.{{ this.identifier }} CLONE {{ this }};
         {% endif %}
-      
+
       # after build, keep grants up-to-date for environment's read-only role
       +post-hook: >
         GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO
@@ -102,11 +104,10 @@ snapshots:
       %}
         CREATE OR REPLACE TABLE {{ this.schema }}_ROLLBACK.{{ this.identifier }} CLONE {{ this }};
       {% endif %}
-      
+
     # after build, keep grants up-to-date for environment's read-only role
     +post-hook: >
       GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO
-
 
 #----- SEEDS -----#
 seeds:
@@ -115,7 +116,7 @@ seeds:
     +persist_docs: # adds model and column descriptions from YML files to created objects in Snowflake
       relation: true
       columns: true
-      
+
     # after build, keep grants up-to-date for environment's read-only role
     +post-hook: >
       GRANT SELECT ON {{ this }} TO ROLE {{ target.name }}_RO

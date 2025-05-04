@@ -1,7 +1,9 @@
 -- Configurations: https://docs.getdbt.com/reference/resource-configs/snowflake-configs
 {{
     config(
-        materialized='table'
+        materialized='table',
+        tags='critical',
+        cluster_by=['priority_int', 'order_date']
     )
 }}
 
