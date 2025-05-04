@@ -16,7 +16,7 @@ sources:
     tables:
       - name: customer
         description: >
-          One record per customer. Customers **may or may** not have associated orders.
+          One record per customer. Customers **may or may not** have associated orders.
         columns:
           - name: c_custkey # unique key
             data_type: int
