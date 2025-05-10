@@ -9,7 +9,7 @@
 
 with orders as (
 
-    select * from {{ ref('snap__orders') }} -- references the orders snapshot
+    select * from {{ ref('snap__orders') }} -- /snapshots/snap__orders.sql (order snapshot)
 
 ),
 
@@ -32,8 +32,8 @@ renamed as (
     from
         orders
     where
-        dbt_valid_to is null    -- filter out expired records
-        and customer_id not in (  -- filter out deleted customers - we don't care about their orders anymore
+        dbt_valid_to is null    -- filter to only the snapshot's currently active records
+        and customer_id not in (-- filter out deleted customers - business doesn't care about their orders anymore
             select customer_id
             from deleted_customers
         )

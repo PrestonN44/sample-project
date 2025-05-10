@@ -44,12 +44,17 @@ customer_order_with_updates as (
         count_order_updates.order_submission_date,
         count_order_updates.last_order_change_date,
         count_order_updates.total_order_updates,
-        {{ apply_discount() }} as new_discount, -- call macro to get random discount
         order_items.low_cost_items,
         order_items.mid_cost_items,
         order_items.high_cost_items,
         customer_orders.customer_id,
-        customer_orders.name
+        customer_orders.name,
+
+        -- get amount in configured currency, after multiplying by conversion factor (macro at: /macros/format_currency.sql)
+        {{ format_currency('order_items.total_line_amount', var('default_currency_type')) }} as sum_orders_cost
+
+        -- get amount in euros, after multiplying by conversion factor (macro at: /macros/format_currency.sql)
+        {{ format_currency('order_items.total_line_amount', 'EUR') }} as sum_orders_cost_euro
     from
         count_order_updates
     join

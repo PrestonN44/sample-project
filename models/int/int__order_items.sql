@@ -10,19 +10,18 @@ lineitem as (
 
 ),
 
--- set variables
+-- set bound variables
 {% set lower_amount = 10000 %}
 {% set upper_amount = 500000 %}
-{% set lineitem_amount_expression = 'quantity * extended_price' %}
 
 order_items as (
 
     select
         orders.order_id,
-        '$' || sum({{ lineitem_amount_expression }}) as total_line_amount,
-        count(case when {{ lineitem_amount_expression }} <= {{ lower_amount }} then quantity end) as low_cost_items,
-        count(case when {{ lineitem_amount_expression }} between {{ lower_amount }} and {{ upper_amount }} then quantity end) as mid_cost_items,
-        count(case when {{ lineitem_amount_expression }} >= {{ upper_amount }} then quantity end) as high_cost_items,
+        sum(lineitem.quantity * lineitem.extended_price) as total_line_amount,
+        count(case when (lineitem.quantity * lineitem.extended_price) <= {{ lower_amount }} then quantity end) as low_cost_items,
+        count(case when (lineitem.quantity * lineitem.extended_price) between {{ lower_amount }} and {{ upper_amount }} then quantity end) as mid_cost_items,
+        count(case when (lineitem.quantity * lineitem.extended_price) >= {{ upper_amount }} then quantity end) as high_cost_items
     from
         orders
     join

@@ -21,8 +21,9 @@ clean-targets: # directories to be removed by `dbt clean`
 
 #----- GLOBAL VARIABLES -----#
 vars:
-  dbt_table_schemas: ["DBT_SNAPSHOTS", "DBT_MART"] # table schemas that dbt creates
+  dbt_table_schemas: ['DBT_SNAPSHOTS', 'DBT_MART'] # table schemas that dbt creates
   data_retention_days: 90 # used for snapshot cut-off
+  default_currency_type: 'USD'
 
   # roles to compare to determine local development run vs official run
   executing_role: "{{ target.role | upper }}"

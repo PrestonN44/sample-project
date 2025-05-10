@@ -2,7 +2,7 @@ with customer as (
 
     select * from {{ ref('stg__customer') }}
 
-),--testing
+),
 
 customer_orders as (
 
@@ -23,7 +23,9 @@ customer_info_final as (
         customer_orders.num_payed_orders,
         customer_orders.num_open_orders,
         customer_orders.num_fulfilled_orders,
-        customer_orders.sum_orders_cost
+
+        -- get amount in configured currency, after multiplying by conversion factor (macro at: /macros/format_currency.sql)
+        {{ format_currency('customer_orders.sum_orders_cost', var('default_currency_type')) }} as sum_orders_cost
     from
         customer
     join

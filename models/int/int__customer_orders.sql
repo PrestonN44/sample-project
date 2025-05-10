@@ -26,7 +26,7 @@ customer_orders as (
         count(case when orders.status = 'P' then 1 end) as num_payed_orders,
         count(case when orders.status = 'O' then 1 end) as num_open_orders,
         count(case when orders.status = 'F' then 1 end) as num_fulfilled_orders,
-        '$' || round(sum(orders.total_price), 2) as sum_orders_cost,
+        sum(orders.total_price) as sum_orders_cost
     from
         customer
     join

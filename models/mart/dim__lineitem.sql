@@ -1,10 +1,4 @@
-with order_items as (
-
-    select * from {{ ref('int__order_items') }}
-
-),
-
-lineitem as (
+with lineitem as (
 
     select * from {{ ref('stg__lineitem') }}
 
@@ -14,14 +8,16 @@ lineitem as (
 lineitem_info as (
 
     select
-        order_items.order_id || '-' || lineitem.line_number as order_line_number_id, -- build composite key with order + line number
-        order_items.total_line_amount,
-        lineitem.ship_mode,
-        lineitem.receipt_date
+        order_id || '-' || line_number as order_line_number_id, -- build composite key with order + line number to use as unique key
+        order_id,
+        ship_mode,
+        receipt_date,
+        quantity,
+
+        -- get amount in configured currency, after multiplying by conversion factor (macro at: /macros/format_currency.sql)
+        {{ format_currency('extended_price', var('default_currency_type')) }} as extended_price
     from
-        order_items
-    join
-        lineitem using (order_id)
+        lineitem
 
 )
 
