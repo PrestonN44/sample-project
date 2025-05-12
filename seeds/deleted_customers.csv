@@ -1,6 +1,6 @@
 customer_id,reason
-60007,'Inactive account'
-60011,'Fraudulent behavior'
-60032,'Merged account'
-60033,'Violated TOS'
-60080,'Duplicate account'
+60007,Inactive account
+60011,Fraudulent behavior
+60032,Merged account
+60033,Violated TOS
+60080,Duplicate account

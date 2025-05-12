@@ -11,6 +11,7 @@ models:
     columns:
       - name: order_id # unique key
         data_type: int
+        description: "{{ doc('order_id') }}" # description defined in docs block (at: /docs/descriptions.md)
         data_tests:
           - unique
           - not_null
@@ -47,6 +48,7 @@ models:
 
       - name: customer_id
         data_type: int
+        description: "{{ doc('customer_id') }}" # description defined in docs block (at: /docs/descriptions.md)
         data_tests:
           - relationships:
               to: ref('dim__customer')
@@ -56,6 +58,20 @@ models:
         data_type: string
         data_tests:
           - not_null
+
+      - name: total_amount
+        data_type: string
+        description: "Total order amount in default configured currency"
+        data_tests:
+          - not_null
+
+      - name: total_amount_euro
+        data_type: string
+        description: "Total order amount in Euros (€)"
+
+      - name: total_amount_yen
+        data_type: string
+        description: "Total order amount in Japanese Yen (¥)"
 
   - name: dim__customer
     description: >
@@ -69,6 +85,7 @@ models:
     columns:
       - name: customer_id # unique key
         data_type: int
+        description: "{{ doc('customer_id') }}" # description defined in docs block (at: /docs/descriptions.md)
         data_tests:
           - unique
           - not_null
@@ -118,7 +135,7 @@ models:
           - non_negative # CUSTOM TEST
 
       - name: sum_orders_cost
-        data_type: number
+        data_type: text
 
   - name: dim__lineitem
     description: >
@@ -135,10 +152,8 @@ models:
           - unique
           - not_null
 
-      - name: total_line_amount
-        data_type: date
-        data_tests:
-          - not_null
+      - name: extended_price
+        data_type: text
 
       - name: ship_mode
         data_type: date

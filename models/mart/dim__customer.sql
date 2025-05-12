@@ -1,3 +1,10 @@
+-- NOTE: because this model uses the format_currency macro at /macros/format_currency.sql, which then references the 
+--       usd_currency_conversion seed at /seeds/usd_currency_conversion.csv,
+--       we need to manually let dbt know that in some way this model references that seed so that it can detect the dependency -
+--       otherwise there will be an error on build. Do this with the "depends_on" comment below:
+
+-- depends_on: {{ ref('usd_currency_conversion') }}
+
 with customer as (
 
     select * from {{ ref('stg__customer') }}
@@ -23,7 +30,9 @@ customer_info_final as (
         customer_orders.num_payed_orders,
         customer_orders.num_open_orders,
         customer_orders.num_fulfilled_orders,
-        customer_orders.sum_orders_cost
+
+        -- get amount in default configured currency, after multiplying by conversion factor (macro at: /macros/format_currency.sql)
+        {{ format_currency('customer_orders.sum_orders_cost', var('default_currency_type')) }} as sum_orders_cost
     from
         customer
     join
