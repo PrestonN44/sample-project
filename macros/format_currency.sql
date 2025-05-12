@@ -24,7 +24,7 @@
             NULL
         {% endif %}
 
-        -- add converted amount after symbol
+        -- add amount conversion formula after currency symbol
         || LTRIM(TO_CHAR(round({{ amount_column }} * {{ factor }}, 2), '999,999,999,999,999.00'))
 
     {% endif %}
