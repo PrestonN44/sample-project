@@ -42,7 +42,7 @@ on-run-start: >
 # "schemas" keyword refers to each schema in which an object was built during the current run
 on-run-end: >
   {% if var('executing_role') == var('dbt_service_user_role') %}
-    {% for schema in schema %}
+    {% for schema in schemas %}
       GRANT USAGE ON SCHEMA {{ schema }} TO ROLE {{ target.name }}_RO;
     {% endfor %}
   {% endif %}
