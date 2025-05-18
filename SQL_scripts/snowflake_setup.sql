@@ -1,0 +1,93 @@
+// This script builds the Snowflake Development (DEV) and Production (PROD) environment objects for dbt to use, including:
+//    - dbt Service User
+//    - Database (storage)
+//    - Warehouses (compute)
+//    - Roles (developer, dbt service role, read-only)
+
+--------------- DEV SETUP ---------------
+
+//-- Create database for dbt to build objects in --//
+USE ROLE SYSADMIN;
+CREATE OR REPLACE DATABASE DEV_ANALYTICS;
+
+//-- Create warehouses to provide compute power to developers --//
+USE ROLE SYSADMIN;
+CREATE OR REPLACE WAREHOUSE DEV_WH
+    WAREHOUSE_SIZE = XSMALL -- 8 threads of execution
+    AUTO_SUSPEND = 300  -- 5 minutes
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+;
+
+//-- Create/manage roles --//
+USE ROLE SECURITYADMIN;
+
+-- developer role
+CREATE ROLE IF NOT EXISTS DEVELOPER;
+GRANT USAGE ON WAREHOUSE DEV_WH TO ROLE DEVELOPER;
+GRANT USAGE ON DATABASE DEV_ANALYTICS TO ROLE DEVELOPER;
+GRANT CREATE SCHEMA ON DATABASE DEV_ANALYTICS TO ROLE DEVELOPER;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE DEVELOPER;
+GRANT SELECT ON ALL TABLES IN SCHEMA SNOWFLAKE_SAMPLE_DATA.TPCH_SF1 TO ROLE DEVELOPER;
+GRANT ROLE DEVELOPER TO ROLE SYSADMIN;
+
+-- read-only role
+CREATE ROLE IF NOT EXISTS DEV_RO;
+GRANT USAGE ON WAREHOUSE DEV_WH TO ROLE DEV_RO;
+GRANT USAGE ON DATABASE DEV_ANALYTICS TO ROLE DEV_RO;
+GRANT ROLE DEV_RO TO ROLE SYSADMIN;
+
+
+--------------- PROD SETUP ---------------
+
+//-- Create service user to run scheduled jobs from dbt Cloud --//
+USE ROLE USERADMIN;
+CREATE USER IF NOT EXISTS prod_dbt_service_user 
+    PASSWORD = 'PRODdBtD3m0P4s$word'
+    TYPE = LEGACY_SERVICE -- normal "SERVICE" type users must authenticate with keypair or OAuth
+;
+
+//-- Create database for dbt to build objects in --//
+USE ROLE SYSADMIN;
+CREATE OR REPLACE DATABASE PROD_ANALYTICS;
+
+//-- Create warehouses to provide compute power to read-only users and dbt service user --//
+USE ROLE SYSADMIN;
+CREATE OR REPLACE WAREHOUSE PROD_WH
+    WAREHOUSE_SIZE = XSMALL -- 8 threads of execution
+    AUTO_SUSPEND = 300  -- 5 minutes
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+;
+CREATE OR REPLACE WAREHOUSE PROD_DBT_WH
+    WAREHOUSE_SIZE = SMALL -- 16 threads of execution
+    AUTO_SUSPEND = 60  -- 1 minute (minimum)
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+;
+
+//-- Create/manage roles --//
+USE ROLE SECURITYADMIN;
+
+-- role for dbt service user
+CREATE ROLE IF NOT EXISTS PROD_DBT;
+GRANT USAGE ON WAREHOUSE PROD_DBT_WH TO ROLE PROD_DBT;
+GRANT USAGE ON DATABASE PROD_ANALYTICS TO ROLE PROD_DBT;
+GRANT CREATE SCHEMA ON DATABASE PROD_ANALYTICS TO ROLE PROD_DBT;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE PROD_DBT;
+GRANT SELECT ON ALL TABLES IN SCHEMA SNOWFLAKE_SAMPLE_DATA.TPCH_SF1 TO ROLE PROD_DBT;
+GRANT ROLE PROD_DBT TO ROLE SYSADMIN;
+GRANT ROLE PROD_DBT TO USER prod_dbt_service_user; -- grant dbt role to service user
+
+-- read-only role
+CREATE ROLE IF NOT EXISTS PROD_RO;
+GRANT USAGE ON WAREHOUSE PROD_WH TO ROLE PROD_RO;
+GRANT USAGE ON DATABASE PROD_ANALYTICS TO ROLE PROD_RO;
+GRANT ROLE PROD_RO TO ROLE SYSADMIN;
+
+//-- Get account identifier --//
+
+USE ROLE ACCOUNTADMIN;
+SELECT CURRENT_ORGANIZATION_NAME() || '-' || CURRENT_ACCOUNT_NAME() as account_identifier;
+-- SHOW ACCOUNTS;
+-- SELECT lower("account_locator") || '.us-east-2.aws' AS account_identifier FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
