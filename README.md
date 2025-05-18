@@ -12,5 +12,5 @@ Layers include:
 
 [GitHub Project Link](https://github.com/dbt-snowflake-demo/sample-project)
 
-![dbt Sample Project DAG](docs/assets/sample_project_DAG.png)
-![Snowflake Structure](docs/assets/snowflake_structure.png)
+![dbt_sample_project_lineage](https://github.com/user-attachments/assets/6a6e12bc-0aa1-4a3e-940e-15246b25c247)
+![snowflake_structure](https://github.com/user-attachments/assets/c91730f9-400d-4ba5-87b5-f9d9b805de27)
