@@ -57,7 +57,7 @@ customer_order_with_updates as (
         order_items.status,
         order_items.priority_int,
         customer_orders.customer_id,
-        customer_orders.name,
+        customer_orders.customer_name,
 
         -- get amount in default configured currency, after multiplying by conversion factor (macro at: /macros/format_currency.sql)
         {{ format_currency('order_items.total_line_amount', var('default_currency_type')) }} as total_amount,

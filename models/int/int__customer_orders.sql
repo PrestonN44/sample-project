@@ -21,7 +21,7 @@ customer_orders as (
 
     select
         customer.customer_id,
-        customer.name,
+        customer.name as customer_name,
         count(orders.order_id) as num_total_orders,
         count(case when orders.status = 'P' then 1 end) as num_payed_orders,
         count(case when orders.status = 'O' then 1 end) as num_open_orders,

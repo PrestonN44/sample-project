@@ -54,7 +54,7 @@ models:
               to: ref('dim__customer')
               field: customer_id # foreign key to match on
 
-      - name: name
+      - name: customer_name
         data_type: string
         data_tests:
           - not_null
