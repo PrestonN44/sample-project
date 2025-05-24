@@ -3,7 +3,7 @@ with part as (
     select * from {{ ref('snap__part') }}
 
 ),
-
+asd
 renamed as (
 
     select
