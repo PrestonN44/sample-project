@@ -119,3 +119,14 @@ models:
 
       - name: receipt_date
         data_type: date
+
+  - name: stg__part
+    description: >
+      Cleansed part data.
+    columns:
+      - name: part_id # unique key
+        data_type: int
+        description: "{{ doc('part_id') }}" # description defined in docs block (at: /docs/descriptions.md)
+        data_tests:
+          - unique
+          - not_null
